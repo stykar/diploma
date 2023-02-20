@@ -1,14 +1,11 @@
-data/
-results/
-models/
+.vscode
 
-
-
-
-
-
-
-
+data/*
+!data/.gitkeep
+results/*
+!results/.gitkeep
+models/*
+!models/.gitkeep
 
 
 # Byte-compiled / optimized / DLL files
