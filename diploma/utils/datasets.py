@@ -14,7 +14,7 @@ class PharmaDataset(Dataset):
         """Initiliazes object"""
         super(PharmaDataset).__init__()
         # Convert to ints so we don't have issue with indexing
-        labels = labels.astype(np.int16)
+        labels = labels.astype(np.int16) - 1
         self.x = features
         self.y = np.zeros(shape=(labels.shape[0], 2))
         # Save labels with one-hot encoding
