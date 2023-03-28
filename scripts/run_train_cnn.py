@@ -4,7 +4,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from torch.nn import BCEWithLogitsLoss
-from diploma.models.neural_nets import MultiLayerPerceptron
+from diploma.models.neural_nets import ConvolutionalNetwork
 from diploma.utils.trainer import train_model
 from diploma.utils.datasets import PharmaDataset
 
@@ -52,10 +52,9 @@ if __name__ == "__main__":
         batch_size=4
     )
 
-    model = MultiLayerPerceptron(
-        hidden_layers=[128, 256, 512],
-        input_dim=x_train.shape[1],
+    model = ConvolutionalNetwork(
         output_dim=2,
+        dropout_prob=0.2
     )
     print(model)
     print(f'model trainable parameters: {model.calculate_params()}')
@@ -82,7 +81,7 @@ if __name__ == "__main__":
         plt.ylabel(metric_name)
         plt.xlabel('Epoch')
         plt.legend(['train', 'val'])
-        plt.savefig(f'results/mlp_{metric_name}', dpi=500)
+        plt.savefig(f'results/conv_{metric_name}', dpi=500)
 
     df = pd.read_csv('data/test_set.csv').drop(columns=['Title'], axis=1)
     test = df.to_numpy()
