@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
 from torch.optim import Adam
-from torch.nn import BCEWithLogitsLoss
+from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss
 from diploma.models.neural_nets import MultiLayerPerceptron
 from diploma.utils.trainer import train_model
 from diploma.utils.datasets import PharmaDataset
@@ -44,12 +44,12 @@ if __name__ == "__main__":
 
     train_loader = DataLoader(
         dataset=train_dataset,
-        batch_size=128,
+        batch_size=32,
         shuffle=True
     )
     validation_loader = DataLoader(
         dataset=val_dataset,
-        batch_size=4
+        batch_size=32
     )
 
     model = MultiLayerPerceptron(
@@ -68,8 +68,8 @@ if __name__ == "__main__":
         train_dataloader=train_loader,
         validation_dataloader=validation_loader,
         optimizer=optimizer,
-        loss_functions=[BCEWithLogitsLoss()],
-        epochs=10,
+        loss_functions=[CrossEntropyLoss()],
+        epochs=30,
         best_model_path='models/nn.pt'
     )
 
