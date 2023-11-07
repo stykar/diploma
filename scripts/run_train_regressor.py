@@ -1,15 +1,15 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from torch.utils.data import DataLoader
-from torch.optim import Adam
-from torch.nn import MSELoss
-from diploma.models.neural_nets import ConvolutionalNetwork
-from diploma.utils.regression_trainer import train_model
-from diploma.utils.datasets import PharmaRegressionDataset
-
+import pandas as pd
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
+from torch.nn import MSELoss
+from torch.optim import Adam
+from torch.utils.data import DataLoader
+
+from diploma.models.neural_nets import ConvolutionalNetwork
+from diploma.utils.datasets import PharmaRegressionDataset
+from diploma.utils.regression_trainer import train_model
 
 
 if __name__ == "__main__":
@@ -32,12 +32,13 @@ if __name__ == "__main__":
 
     train_data = np.concatenate((x_train, y_train), axis=1)
     validation_data = np.concatenate((x_validation, y_validation), axis=1)
+    # We do this to scale labels as well
     scaler = preprocessing.MinMaxScaler()
     scaled_train_data = scaler.fit_transform(train_data)
     scaled_validation_data = scaler.transform(validation_data)
     x_train = scaled_train_data[:, :-1]
     y_train = scaled_train_data[:, -1].reshape(x_train.shape[0], 1)
-    print(y_train)
+    #print(y_train)
     x_validation = scaled_validation_data[:, :-1]
     y_validation = scaled_validation_data[:, -1].reshape(x_validation.shape[0], 1)
 
@@ -85,9 +86,22 @@ if __name__ == "__main__":
         plt.legend(['train', 'val'])
         plt.savefig(f'results/conv_{metric_name}_regression', dpi=500)
 
-    # df = pd.read_csv('data/test_set_regression.csv').drop(columns=['Title'], axis=1)
-    # test = df.to_numpy()
-    # test = scaler.transform(test)
-    # probs = model.predict(test)
-    # np.set_printoptions(suppress=True)
-    # print(probs)
+    
+    new_features = [f'{feature}'.replace(' ', '_') for feature in df.columns]
+    final_features = []
+    df_test = pd.read_csv('data/test_set.csv').drop(columns=['Title'], axis=1)
+
+    for feature in new_features:
+        for old_feature in df_test.columns:
+            if feature in old_feature:
+                final_features.append(old_feature)
+                break
+
+    df_test = df_test[final_features]
+    df_test['dummy'] = 0
+    test = df_test.to_numpy()
+    test = scaler.transform(test)
+    test = test[:, :-1]
+    values = model.predict(test)
+    np.set_printoptions(suppress=True)
+    print(values)
